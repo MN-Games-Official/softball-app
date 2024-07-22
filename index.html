@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Softball Lineup Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input { margin: 5px; padding: 5px; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Softball Lineup Generator</h1>
+    <div id="playerForm">
+        <h2>Add Players</h2>
+        <input type="text" id="playerName" placeholder="Player Name" />
+        <input type="text" id="playerSkill" placeholder="Player Skill (e.g., Power, Speed)" />
+        <button onclick="addPlayer()">Add Player</button>
+    </div>
+    <div id="playersList">
+        <h2>Players</h2>
+        <ul id="players"></ul>
+    </div>
+    <button onclick="generateLineup()">Generate Lineup</button>
+    <div id="lineup">
+        <h2>Generated Lineup</h2>
+        <ul id="lineupList"></ul>
+    </div>
+    <script>
+        let players = [];
+
+        function addPlayer() {
+            const name = document.getElementById('playerName').value;
+            const skill = document.getElementById('playerSkill').value;
+            if (name && skill) {
+                players.push({ name, skill });
+                document.getElementById('players').innerHTML += `<li>${name} - ${skill}</li>`;
+                document.getElementById('playerName').value = '';
+                document.getElementById('playerSkill').value = '';
+            }
+        }
+
+        async function generateLineup() {
+            const response = await fetch('/generate-lineup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ players })
+            });
+            const lineup = await response.json();
+            document.getElementById('lineupList').innerHTML = lineup.map(player => `<li>${player}</li>`).join('');
+        }
+    </script>
+</body>
+</html>
